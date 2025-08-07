@@ -5,8 +5,7 @@ from pymongo.server_api import ServerApi
 
 load_dotenv()
 
-#DB = os.getenv("MONGO_DB_NAME") or os.getenv("MONGO_DB_NAME")
-DB = os.getenv("MONGO_DB_NAME") or os.getenv("MONGO_DB_NAME")
+DB = os.getenv("DATABASE_NAME") or os.getenv("MONGO_DB_NAME")
 URI = os.getenv("MONGODB_URI") or os.getenv("URI")
 
 if not DB:
@@ -39,7 +38,7 @@ def t_connection():
         client.admin.command("ping")
         return True
     except Exception as e:
-        print(f"Error conectando a MongoDB ")
+        print(f"Error conectando a MongoDB: {e} ")
         return False
     
     
