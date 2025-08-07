@@ -23,7 +23,7 @@ from routes.orderdetails import router as orderdetails_router
 app = FastAPI()
 
 
-#routers
+#routers -rutas del modelo
 app.include_router(reviews_router)
 app.include_router(book_router)
 app.include_router(inventory_routes)
