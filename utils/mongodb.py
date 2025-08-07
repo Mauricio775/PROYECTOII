@@ -5,8 +5,9 @@ from pymongo.server_api import ServerApi
 
 load_dotenv()
 
+#DB = os.getenv("MONGO_DB_NAME") or os.getenv("MONGO_DB_NAME")
 DB = os.getenv("MONGO_DB_NAME") or os.getenv("MONGO_DB_NAME")
-URI = os.getenv("URI") or os.getenv("URI")
+URI = os.getenv("MONGODB_URI") or os.getenv("URI")
 
 if not DB:
     raise ValueError("Database name not found. set DATABASE_NAME or MONGO_DB_NAME environmet variable")

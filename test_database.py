@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 def test_env_variables():
-    mongodb_uri = os.getenv("URI")
+    mongodb_uri = os.getenv("MONGODB_URI")
     assert mongodb_uri is not None, "URI no esta configurada"
     
     
@@ -14,7 +14,7 @@ def test_env_variables():
 
 def test_connect():
     try:
-        connection_result = t_connection()  # ✅ Aquí ejecutas la función
+        connection_result = t_connection() 
         assert connection_result is True, "La conexion a la Base Fallo"
     except Exception as e:
         pytest.fail(f"Error en la conexion a MongoDB {str(e)}")
