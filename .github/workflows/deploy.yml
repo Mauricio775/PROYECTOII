@@ -35,7 +35,7 @@ jobs:
 
         - name: Test FastAPI imports
           env:
-            URI: ${{ secrets.MONGODB_URI}} ###########
+            MONGODB_URI: ${{ secrets.MONGODB_URI}} ###########
             MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME}}
             FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY}}
             FIREBASE_CREDENTIALS_BASE64: ${{secrets.FIREBASE_CREDENTIALS_BASE64}}
@@ -46,7 +46,7 @@ jobs:
 
         - name: Run tests
           env:
-            URI: ${{ secrets.MONGODB_URI}} ###########
+            MONGODB_URI: ${{ secrets.MONGODB_URI}} ###########
             MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME}}
             FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY}}
             FIREBASE_CREDENTIALS_BASE64: ${{secrets.FIREBASE_CREDENTIALS_BASE64}}
