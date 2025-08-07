@@ -7,12 +7,14 @@ import requests
 import base64
 from fastapi import HTTPException
 from firebase_admin import credentials, auth as firebase_auth
-
+from dotenv import load_dotenv
 from models.users import User
 from models.login import Login
 
 from utils.security import create_jwt_token
 from utils.mongodb import get_collection
+
+load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
