@@ -14,10 +14,11 @@ def test_env_variables():
 
 def test_connect():
     try:
-        connection_result = t_connection
+        connection_result = t_connection()  # ✅ Aquí ejecutas la función
         assert connection_result is True, "La conexion a la Base Fallo"
     except Exception as e:
-        pytest.fail(f"Error en la conexion a MongoDB { str(e)}")
+        pytest.fail(f"Error en la conexion a MongoDB {str(e)}")
+
         
 def test_mongo_client():
     try:

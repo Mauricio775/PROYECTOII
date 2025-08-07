@@ -22,7 +22,7 @@ def get_mongo_client():
             URI,
             server_api=ServerApi("1"),
             tls=True,
-            tlsAllowIvalidCertificates= True,
+            tlsAllowInvalidCertificates= True,
             serverSelectionTimeoutMS =5000
         )
     return _client
