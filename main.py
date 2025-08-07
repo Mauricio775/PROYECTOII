@@ -36,7 +36,7 @@ app.include_router(orderdetails_router)
 
 @app.get("/")
 def read_root():
-    return {"version": "0.0.0"}
+    return {"status": "healthy", "version": "0.0.0", "service": "libros-api"}
 
 #Estooooooo es lo nuevo ##############
 @app.get("/health")
@@ -45,7 +45,7 @@ def health_check():
         return {
             "status": "healthy",
             "timestamp": "2025-01-31",
-            "service": "libros-proyecto",
+            "service": "libros-api",
             "environment": "production"
         }
     
@@ -60,7 +60,7 @@ def readiness_check():
         return {
             "status": "ready"  if db_status else "not_ready",
             "database": "connected" if db_status else "disconnected",
-            "service": "libros-proyecto"
+            "service": "libros-api"
         }
     except Exception as e:
         return {"status": "not_ready", "error": str(e)}
