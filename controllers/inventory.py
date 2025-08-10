@@ -9,19 +9,25 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 inventory_collection = get_collection("inventory")
+book_collection = get_collection("book")
 
-async def create_inventory(inventory: Inventory, user_id: str) -> dict:
+async def create_inventory(inventory: Inventory) -> Inventory:
     try:
+        #Validar que libro exista y este activo usando pipeline
+        exist_book = inventory_collection.find_one({
+            "id_book": inventory.id_book})
+        
+        if exist_book:
+            raise HTTPException(status_code=400, detail="Inventario ya existe")
         
         inventory_dict = inventory.model_dump(exclude={"id"})
-        inventory_dict["created_by"] = user_id
-
         result = inventory_collection.insert_one(inventory_dict)
         inventory.id = str(result.inserted_id)
-        return {"success": True, "data": inventory}
+        return inventory
+
     except Exception as e:
-        logger.error(f"Error al crear inventario: {e}")
-        return {"success": False, "message": "Error al crear inventario"}
+        raise HTTPException(status_code=500, detail=str(e))
+        
 
 async def get_inventory(filtro: Optional[str] = None) -> list[Inventory]:
     try:
@@ -75,3 +81,17 @@ async def update_id(inventory_id: str, update_data: Inventory) -> Inventory:
         raise HTTPException(status_code=500, detail="Error al actualizar inventario")
 
 
+async def deactivate_inventory(inventory_id: str) -> Inventory:
+    try:
+        result = inventory_collection.update_one(
+            {"_id": ObjectId(inventory_id)},
+            {"$set": {"active": False}}
+        )
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Inventory no encontrado")
+
+        return await get_inventory_id(inventory_id)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error desactivando Catalogo: {str(e)}")

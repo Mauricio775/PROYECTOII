@@ -13,25 +13,37 @@ class Inventory(BaseModel):
         examples=["68812f319934647439127302"]
     )
 
-    quantity: int = Field(
-        description="Cantidad de libros disponibles",
-        examples=[21]
+    name: str = Field(
+        description="Nombre del Inventario",
+        examples=["Inventario de Libros"]
     )
 
     description: str = Field(
         description="Descripción del inventario",
         examples=["Libros de ciencia ficción"]
     )
+    
+    cost: float = Field(
+        description="Costo del Inventario",
+        gt=0,
+        examples=[150.50, 89.99]
+    )
 
+    discount: int = Field(
+        description="Descuento en porcentaje (0-100)",
+        ge=0,
+        le=100,
+        default=0,
+        examples=[10, 25, 0]
+    )
+    
     inventory_date: datetime = Field(
         default_factory=datetime.utcnow,
         description="Fecha de creación del inventario"
     )
 
-    @field_validator("quantity")
-    @classmethod
-    def validate_quantity(cls, value: int) -> int:
-        if value < 0:
-            raise ValueError("La cantidad no puede ser negativa")
-        return value
+    active: bool = Field(
+        default=True,
+        description="Estado activo del Inventario"
+    )
 
