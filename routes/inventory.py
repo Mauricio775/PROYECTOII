@@ -14,6 +14,7 @@ router = APIRouter(tags=["inventory"])
 
 
 @router.post("/inventory", response_model= Inventory)
+@validateadmin
 async def create_inventory_endpoint(request: Request, inventory: Inventory) -> Inventory:
     """Crear un nuevo Inventario"""
     return await create_inventory(inventory)

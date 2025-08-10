@@ -1,4 +1,5 @@
 import os
+import logging
 import uvicorn
 from fastapi import FastAPI, Request
 
@@ -96,6 +97,8 @@ app.include_router(payments_type_router)
 app.include_router(paymenthistory_router)
 app.include_router(orderdetails_router)
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-if __name__== "_main_":
+if __name__== "__main__":##Actualizado
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
