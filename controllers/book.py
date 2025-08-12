@@ -69,7 +69,7 @@ async def update_book(book_id:str, book: Book) -> Book:
         raise HTTPException(status_code=500, detail= f"Error actualizando: {str(e)}")
     
     
-async def desactivate_book(book_id: str) -> dict:
+async def deactivate_book(book_id: str) -> dict:
     try:
         pipeline= validate_book_assigned_pipeline(book_id)
         assigned = list(coll.aggregate(pipeline))

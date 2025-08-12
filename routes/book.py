@@ -5,13 +5,14 @@ from controllers.book import (
     get_book,
     get_book_id,
     update_book,
-    desactivate_book
+    deactivate_book
 )
 from utils.security import validateuser
 
 router = APIRouter(tags=["Book"])
 
 @router.post("/book")
+@validateuser
 async def post_book(book: Book):
     return await create_book(book)
 
@@ -34,4 +35,4 @@ async def update_book_endpoint(request: Request, book_id: str, book: Book) -> Bo
 @router.delete("/book/{book_id}", response_model=dict)
 @validateuser
 async def deactivate_book_endpoint(request: Request, book_id: str) -> dict:
-    return await desactivate_book(book_id)
+    return await deactivate_book(book_id)
