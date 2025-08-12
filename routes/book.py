@@ -13,7 +13,7 @@ router = APIRouter(tags=["Book"])
 
 @router.post("/book")
 @validateuser
-async def post_book(book: Book):
+async def post_book(request: Request,book: Book):
     return await create_book(book)
 
 
