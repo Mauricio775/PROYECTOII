@@ -38,24 +38,27 @@ def  get_book_pipeline() -> list:
     
     
     
-def validate_book_assigned_pipeline() -> list:
-     return [
+def validate_book_assigned_pipeline(book_id: str) -> list:
+    return [
         {
             "$match": {
-                "_id": ObjectId(id),
+                "_id": ObjectId(book_id)
             }
-        },{
+        },
+        {
             "$addFields": {
                 "id": {"$toString": "$_id"}
             }
-        },{
+        },
+        {
             "$lookup": {
-                "from": "inventory",
+                "from": "inventory",  # colección relacionada
                 "localField": "id",
                 "foreignField": "id_book",
                 "as": "result"
             }
-        },{
+        },
+        {
             "$group": {
                 "_id": {
                     "id": "$id",
@@ -66,7 +69,8 @@ def validate_book_assigned_pipeline() -> list:
                     "$sum": {"$size": "$result"}
                 }
             }
-        },{
+        },
+        {
             "$project": {
                 "_id": 0,
                 "id": "$_id.id",
