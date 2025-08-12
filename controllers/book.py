@@ -51,22 +51,37 @@ async def get_book_id(book_id:str)-> Book:
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error book: {str(e)}")
         
-        
-async def update_book(book_id:str, book: Book) -> Book:
+async def update_book(book_id: str, book: Book) -> Book:
     try:
-        exist_book = coll.find_one({"description": book.description})
-        if exist_book:
+        # 1) Evitar duplicado contra el propio documento
+        dup = coll.find_one({
+            "_id": {"$ne": ObjectId(book_id)},
+            "description": book.description
+        })
+        if dup:
             raise HTTPException(status_code=400, detail="Book already exists")
-        
-        result = coll.update_one(
+
+        # 2) Actualizar
+        res = coll.update_one(
             {"_id": ObjectId(book_id)},
             {"$set": book.model_dump(exclude={"id"})}
         )
-        if result.modified_count == 0:
+
+        # matched_count verifica existencia; modified_count puede ser 0 si no cambió nada
+        if res.matched_count == 0:
             raise HTTPException(status_code=404, detail="Libro no encontrado")
-        
+
+        # 3) Devolver el documento actualizado para cumplir response_model=Book
+        doc = coll.find_one({"_id": ObjectId(book_id)})
+        doc["id"] = str(doc["_id"])
+        del doc["_id"]
+        return Book(**doc)
+
+    except HTTPException:
+        # No convertir 400/404 en 500
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail= f"Error actualizando: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error actualizando: {str(e)}")    
     
     
 async def deactivate_book(book_id: str) -> dict:

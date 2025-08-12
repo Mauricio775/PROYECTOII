@@ -15,7 +15,7 @@ def  get_book_pipeline() -> list:
                 "as": "result"
             }
         },{
-            "$group": {
+            "$group": { 
                 "_id": {
                     "id": "$id",
                     "description": "$description",
