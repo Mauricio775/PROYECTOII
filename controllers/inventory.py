@@ -13,13 +13,16 @@ book_collection = get_collection("book")
 
 async def create_inventory(inventory: Inventory) -> Inventory:
     try:
-        #Validar que libro exista y este activo usando pipeline
-        exist_book = inventory_collection.find_one({
-            "id_book": inventory.id_book})
-        
-        if exist_book:
-            raise HTTPException(status_code=400, detail="Inventario ya existe")
-        
+        dup = inventory_collection.find_one({
+            "id_book": inventory.id_book,
+            "name": inventory.name
+        })
+        if dup:
+            raise HTTPException(
+                status_code=400,
+                detail="Ya existe un inventario con ese nombre para este libro"
+            )
+
         inventory_dict = inventory.model_dump(exclude={"id"})
         result = inventory_collection.insert_one(inventory_dict)
         inventory.id = str(result.inserted_id)
@@ -27,6 +30,7 @@ async def create_inventory(inventory: Inventory) -> Inventory:
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
         
 
 async def get_inventory(filtro: Optional[str] = None) -> list[Inventory]:
@@ -44,23 +48,21 @@ async def get_inventory(filtro: Optional[str] = None) -> list[Inventory]:
     
 
 async def get_inventory_id(inventory_id: str) -> Inventory:
-    try:
-        obj_id = ObjectId(inventory_id)
-    except Exception:
+    # Validación de ObjectId 
+    if not ObjectId.is_valid(inventory_id):
         raise HTTPException(status_code=400, detail="ID de inventario inválido")
 
     try:
-        
-        doc = inventory_collection.find_one({"_id": obj_id})
-
+        doc = inventory_collection.find_one({"_id": ObjectId(inventory_id)})
         if not doc:
             raise HTTPException(status_code=404, detail="Inventario no encontrado")
 
-        return Inventory(**{**doc, "id": str(doc["_id"])})
+        doc["id"] = str(doc["_id"])
+        del doc["_id"]
+        return Inventory(**doc)
     except HTTPException:
-        raise  # Re-lanza las excepciones HTTP tal como están
+        raise
     except Exception as e:
-        logger.error(f"Error al obtener inventario por ID: {e}")
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 

@@ -19,19 +19,17 @@ async def create_inventory_endpoint(request: Request, inventory: Inventory) -> I
     """Crear un nuevo Inventario"""
     return await create_inventory(inventory)
 
+@router.get("/inventory", response_model=list[Inventory])
+@validateuser
+async def get_inventory_endpoint(request: Request):
+    """Obtener todos los inventarios"""
+    return await get_inventory()
 
-@router.get("/{inventory_id}", response_model=Inventory)
+@router.get("/inventory/{inventory_id}", response_model=Inventory)
 @validateuser
 async def get_id_inventory(request: Request, inventory_id: str):
     return await get_inventory_id(inventory_id)
 
-@router.get("/inventory", response_model=list[Inventory])
-@validateuser
-async def get_inventory_endpoint(
-    request: Request,
-    filtro: Optional[str] = Query(default=None, description="Filtrar por descripción del Inventario")
-):
-    return await get_inventory(filtro)
 
 @router.put("/inventory/{inventory_id}", response_model=Inventory)
 @validateuser

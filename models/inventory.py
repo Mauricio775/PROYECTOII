@@ -36,11 +36,6 @@ class Inventory(BaseModel):
         default=0,
         examples=[10, 25, 0]
     )
-    
-    inventory_date: datetime = Field(
-        default_factory=datetime.utcnow,
-        description="Fecha de creación del inventario"
-    )
 
     active: bool = Field(
         default=True,
