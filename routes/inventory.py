@@ -30,7 +30,6 @@ async def get_inventory_endpoint(request: Request):
 async def get_id_inventory(request: Request, inventory_id: str):
     return await get_inventory_id(inventory_id)
 
-
 @router.put("/inventory/{inventory_id}", response_model=Inventory)
 @validateuser
 async def update(inventory_id: str, update_data: Inventory, request: Request):
