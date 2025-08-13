@@ -41,4 +41,9 @@ class Inventory(BaseModel):
         default=True,
         description="Estado activo del Inventario"
     )
+    
+    book_description: Optional[str] = Field(
+        default=None,
+        description="Descripción del libro asociado (unido por pipeline)"
+    )
 
