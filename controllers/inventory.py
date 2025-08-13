@@ -35,14 +35,13 @@ async def create_inventory(inventory: Inventory) -> Inventory:
 
 async def get_inventory() -> list[Inventory]:
     try:
-        pipeline = get_inventory_with_book_pipeline()
-        docs = list(inventory_collection.aggregate(pipeline))
-        
+        pipeline = get_inventory_with_book_pipeline()     
+        docs = list(inventory_collection.aggregate(pipeline))  
         result = []
-        for doc in inventory_collection.find({}):   
+        for doc in docs:
             doc["id"] = str(doc["_id"])
-            del doc["_id"]
-            result.append(Inventory(**doc))
+            doc.pop("_id", None)
+            result.append(Inventory(**doc))              
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error services: {str(e)}")
