@@ -3,13 +3,14 @@ from typing import Optional
 from bson import ObjectId
 from fastapi import HTTPException
 from models.inventory import Inventory
-from utils.mongodb import get_collection
+from utils.mongodb import get_collection 
+from pipelines.inventory_pipelines import get_inventory_with_book_pipeline
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 inventory_collection = get_collection("inventory")
 book_collection = get_collection("book")
-
+########################
 async def create_inventory(inventory: Inventory) -> Inventory:
     try:
         dup = inventory_collection.find_one({
@@ -34,6 +35,9 @@ async def create_inventory(inventory: Inventory) -> Inventory:
 
 async def get_inventory() -> list[Inventory]:
     try:
+        pipeline = get_inventory_with_book_pipeline()
+        docs = list(inventory_collection.aggregate(pipeline))
+        
         result = []
         for doc in inventory_collection.find({}):   
             doc["id"] = str(doc["_id"])
@@ -45,7 +49,6 @@ async def get_inventory() -> list[Inventory]:
     
 
 async def get_inventory_id(inventory_id: str) -> Inventory:
-    # Validación de ObjectId 
     if not ObjectId.is_valid(inventory_id):
         raise HTTPException(status_code=400, detail="ID de inventario inválido")
 
