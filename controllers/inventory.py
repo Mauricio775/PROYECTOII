@@ -4,7 +4,6 @@ from bson import ObjectId
 from fastapi import HTTPException
 from models.inventory import Inventory
 from utils.mongodb import get_collection
-from pipelines.inventory_pipelines import get_inventory_filter_query
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -33,12 +32,10 @@ async def create_inventory(inventory: Inventory) -> Inventory:
 
         
 
-async def get_inventory(filtro: Optional[str] = None) -> list[Inventory]:
+async def get_inventory() -> list[Inventory]:
     try:
-        query = get_inventory_filter_query(filtro)  
-
         result = []
-        for doc in inventory_collection.find(query):
+        for doc in inventory_collection.find({}):   
             doc["id"] = str(doc["_id"])
             del doc["_id"]
             result.append(Inventory(**doc))
