@@ -1,30 +1,30 @@
-
-
 def get_inventory_with_book_pipeline() -> list:
-  
+    
+
     return [
+        # Normaliza a string el id_book del inventario
+        {"$addFields": {"id_book_str": {"$toString": "$id_book"}}},
+
         {
             "$lookup": {
                 "from": "book",  
-                "let": { "invBook": "$id_book" },
+                "let": {"idb": "$id_book_str"},
                 "pipeline": [
-                    {
-                        "$match": {
-                            "$expr": {
-                                "$or": [
-                                    { "$eq": [ { "$toString": "$_id" }, "$$invBook" ] },  
-                                    { "$eq": [ "$_id", "$$invBook" ] }                     
-                                ]
-                            }
-                        }
-                    },
-                    { "$project": { "_id": 0, "description": 1, "active": 1 } }
+                    {"$addFields": {"_id_str": {"$toString": "$_id"}}},
+                    {"$match": {"$expr": {"$eq": ["$_id_str", "$$idb"]}}},
+                    {"$project": {"_id": 0, "description": 1, "active": 1}}
                 ],
                 "as": "book_data"
             }
         },
-        { "$unwind": { "path": "$book_data", "preserveNullAndEmptyArrays": True } },
-        { "$addFields": { "book_description": "$book_data.description" } },
+
+        # Saca un único documento o permite nulo si no hay match
+        {"$unwind": {"path": "$book_data", "preserveNullAndEmptyArrays": True}},
+
+        # Agrega la descripción del tipo
+        {"$addFields": {"book_description": "$book_data.description"}},
+
+        # Limpia campos auxiliares
         {
             "$project": {
                 "_id": 1,
@@ -38,3 +38,4 @@ def get_inventory_with_book_pipeline() -> list:
             }
         }
     ]
+
